@@ -38,9 +38,11 @@ global_asm!(include_str!("stage_2.s"));
 global_asm!(include_str!("e820.s"));
 global_asm!(include_str!("stage_3.s"));
 
+#[cfg(feature = "vesa_1024x768")]
+global_asm!(include_str!("video_mode/vesa_1024x768.s"));
 #[cfg(feature = "vga_320x200")]
 global_asm!(include_str!("video_mode/vga_320x200.s"));
-#[cfg(not(feature = "vga_320x200"))]
+#[cfg(not(any(feature = "vga_320x200", feature = "vesa_1024x768")))]
 global_asm!(include_str!("video_mode/vga_text_80x25.s"));
 
 unsafe fn context_switch(boot_info: VirtAddr, entry_point: VirtAddr, stack_pointer: VirtAddr) -> ! {
@@ -85,6 +87,8 @@ extern "C" {
     static __bootloader_end: usize;
     static __bootloader_start: usize;
     static _p4: usize;
+
+    static vesa_fb: u32;
 }
 
 #[no_mangle]
@@ -324,6 +328,9 @@ fn bootloader_main(
         memory_map,
         recursive_page_table_addr.as_u64(),
         physical_memory_offset,
+        unsafe {
+            vesa_fb as u64
+        },
     );
     boot_info.memory_map.sort();
 

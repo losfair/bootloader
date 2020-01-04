@@ -42,6 +42,10 @@ pub struct BootInfo {
     /// can be safely accessed.
     #[cfg(feature = "map_physical_memory")]
     pub physical_memory_offset: u64,
+
+    /// The physical address of the VESA framebuffer.
+    pub vesa_framebuffer_addr: u64,
+
     _non_exhaustive: u8, // `()` is not FFI safe
 }
 
@@ -53,6 +57,7 @@ impl BootInfo {
         memory_map: MemoryMap,
         recursive_page_table_addr: u64,
         physical_memory_offset: u64,
+        vesa_framebuffer_addr: u64,
     ) -> Self {
         BootInfo {
             memory_map,
@@ -60,6 +65,7 @@ impl BootInfo {
             recursive_page_table_addr,
             #[cfg(feature = "map_physical_memory")]
             physical_memory_offset,
+            vesa_framebuffer_addr,
             _non_exhaustive: 0,
         }
     }
