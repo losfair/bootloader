@@ -13,11 +13,11 @@ pub fn enable_sse() {
     // For now, we must use inline ASM here
     let mut cr4: u64;
     unsafe {
-        asm!("mov %cr4, $0" : "=r" (cr4));
+        llvm_asm!("mov %cr4, $0" : "=r" (cr4));
     }
     cr4.set_bit(9, true);
     cr4.set_bit(10, true);
     unsafe {
-        asm!("mov $0, %cr4" :: "r" (cr4) : "memory");
+        llvm_asm!("mov $0, %cr4" :: "r" (cr4) : "memory");
     }
 }
